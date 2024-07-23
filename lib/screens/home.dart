@@ -30,22 +30,19 @@ class StudentView extends StatefulWidget {
 
 class _StudentViewState extends State<StudentView> {
   List<Student> students = [];
+  bool isLoading = false;
 
   final limit = 5;
   var page = 0;
-  final String url = 'http://localhost:3000/students';
-  bool isLoading = false;
+  var sortBy = "";
+  var sortType = "asc";
 
   @override
   void initState() {
     super.initState();
     isLoading = true;
-    fetchStudent('$url?limit=$limit&page=$page').then((data) {
-      setState(() {
-        students = data;
-        isLoading = false;
-      });
-    });
+    fetchStudent();
+    isLoading = false;
   }
 
   @override
@@ -85,12 +82,9 @@ class _StudentViewState extends State<StudentView> {
               ],
               onChanged: (selectedValue) {
                 setState(() {
-                  if (selectedValue == "firstName") {
-                    students.sort((a, b) => a.firstName.compareTo(b.firstName));
-                  } else if (selectedValue == "lastName") {
-                    students.sort((a, b) => a.lastName.compareTo(b.lastName));
-                  }
+                  sortBy = selectedValue!;
                 });
+                fetchStudent();
               },
               hint: const Padding(
                 padding: EdgeInsets.all(8.0),
@@ -99,9 +93,8 @@ class _StudentViewState extends State<StudentView> {
             ),
             IconButton(
                 onPressed: () {
-                  setState(() {
-                    students = students.reversed.toList();
-                  });
+                  sortType = sortType == "asc" ? "desc" : "asc";
+                  fetchStudent();
                 },
                 icon: Transform.rotate(
                     angle: 90 * 3.14 / 180,
@@ -119,9 +112,8 @@ class _StudentViewState extends State<StudentView> {
                   setState(() {
                     isLoading = true;
                   });
-                  var data = await fetchStudent('$url?limit=$limit&page=$page');
+                  fetchStudent();
                   setState(() {
-                    students = data;
                     isLoading = false;
                   });
                 },
@@ -132,9 +124,8 @@ class _StudentViewState extends State<StudentView> {
                   setState(() {
                     isLoading = true;
                   });
-                  var data = await fetchStudent('$url?limit=$limit&page=$page');
+                  fetchStudent();
                   setState(() {
-                    students = data;
                     isLoading = false;
                   });
                 },
@@ -144,22 +135,19 @@ class _StudentViewState extends State<StudentView> {
       ],
     );
   }
-}
 
-Future<List<Student>> fetchStudent(String url) async {
-  final res = await http.get(Uri.parse(url));
+  Future<void> fetchStudent() async {
+    const String url = 'http://localhost:3000/students';
+    final res = await http.get(Uri.parse('$url?limit=$limit&page=$page&sortBy=$sortBy&sortType=$sortType'));
 
-  if (res.statusCode == 200) {
-    List<dynamic> data = jsonDecode(res.body);
-    List<Student> students = data.map((item) => Student.fromJson(item)).toList();
-    debugPrint(students.length.toString());
-    for (var s in students) {
-      debugPrint(s.firstName);
+    if (res.statusCode == 200) {
+      List<dynamic> data = jsonDecode(res.body);
+      setState(() {
+        students = data.map((item) => Student.fromJson(item)).toList();
+      });
+    } else {
+      throw Exception("Failed to load Students, Status code: ${res.statusCode}");
     }
-
-    return students;
-  } else {
-    throw Exception("Failed to load Students, Status code: ${res.statusCode}");
   }
 }
 
