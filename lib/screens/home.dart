@@ -1,5 +1,6 @@
 import "dart:convert";
 
+import "package:demo/screens/create_student.dart";
 import "package:flutter/material.dart";
 import "package:http/http.dart" as http;
 
@@ -10,12 +11,25 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Flutter Demo"),
+        title: const Text("Home Screen"),
         backgroundColor: Colors.grey[400],
         centerTitle: true,
       ),
       body: const Center(
         child: StudentView(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Text(
+          '+',
+          style: TextStyle(fontSize: 30),
+        ),
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const CreateStudent(),
+            ),
+          );
+        },
       ),
     );
   }
