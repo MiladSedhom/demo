@@ -170,7 +170,7 @@ class _StudentViewState extends State<StudentView> {
       }
     } catch (e) {
       setState(() {
-        error = e.toString();
+        error = 'Failed to Reach The Server.';
       });
     }
     setState(() {
