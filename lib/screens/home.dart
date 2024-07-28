@@ -26,7 +26,7 @@ class Home extends StatelessWidget {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const CreateStudent(),
+              builder: (context) => const CreateStudentScreen(),
             ),
           );
         },

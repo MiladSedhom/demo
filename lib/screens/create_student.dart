@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
-class CreateStudent extends StatelessWidget {
-  const CreateStudent({super.key});
+class CreateStudentScreen extends StatelessWidget {
+  const CreateStudentScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +33,43 @@ class _CreateStudentFormState extends State<CreateStudentForm> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
 
-  Future<http.Response> postStudent(String firstName, String lastName) async {
+  List<Skill> skills = [];
+  List<Skill> selectedSkills = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchSkills();
+  }
+
+  Future<http.Response> postStudent() async {
     const String url = 'http://localhost:3000/students';
+
+    var skills = selectedSkills.map((skill) => {'_id': skill.id}).toList();
+
     final res = await http.post(Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
         },
-        body: jsonEncode({'firstName': firstName, 'lastName': lastName}));
+        body:
+            jsonEncode({'firstName': firstNameController.text, 'lastName': lastNameController.text, 'skills': skills}));
 
     return res;
+  }
+
+  Future<void> fetchSkills() async {
+    const String url = 'http://localhost:3000/skills';
+
+    final res = await http.get(Uri.parse(url));
+
+    if (res.statusCode == 200) {
+      List<dynamic> data = jsonDecode(res.body);
+      setState(() {
+        skills = data.map((item) => Skill.fromJson(item)).toList();
+      });
+    } else {
+      throw Exception('error getting skills');
+    }
   }
 
   @override
@@ -91,10 +120,27 @@ class _CreateStudentFormState extends State<CreateStudentForm> {
               const SizedBox(
                 height: 16,
               ),
+              MultiSelectDialogField(
+                buttonText: const Text("Choose Student's skills..."),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.1),
+                  borderRadius: const BorderRadius.all(Radius.circular(4)),
+                  border: Border.all(
+                    width: 1,
+                  ),
+                ),
+                searchHint: "Choose Student's skills...",
+                title: const Text("Choose Student's skills"),
+                searchable: true,
+                items: skills.map((skill) => MultiSelectItem(skill, skill.name)).toList(),
+                onConfirm: (values) {
+                  selectedSkills = values;
+                },
+              ),
               ElevatedButton(
                 onPressed: () {
                   if (formKey.currentState!.validate()) {
-                    postStudent(firstNameController.text, lastNameController.text).then((res) {
+                    postStudent().then((res) {
                       if (res.statusCode == 200) {
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           content: Text("Student created successfully!"),
@@ -117,5 +163,29 @@ class _CreateStudentFormState extends State<CreateStudentForm> {
             ],
           ),
         ));
+  }
+}
+
+class Skill {
+  final String id;
+  final String name;
+
+  Skill({
+    required this.id,
+    required this.name,
+  });
+
+  factory Skill.fromJson(Map<String, dynamic> json) {
+    return switch (json) {
+      {
+        '_id': String id,
+        'name': String name,
+      } =>
+        Skill(
+          id: id,
+          name: name,
+        ),
+      _ => throw const FormatException('Failed to load student.'),
+    };
   }
 }
