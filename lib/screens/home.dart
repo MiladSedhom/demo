@@ -1,5 +1,6 @@
 import "dart:convert";
 
+import "package:demo/models.dart";
 import "package:demo/screens/create_student.dart";
 import "package:flutter/material.dart";
 import "package:http/http.dart" as http;
@@ -160,6 +161,7 @@ class _StudentViewState extends State<StudentView> {
 
       if (res.statusCode == 200) {
         List<dynamic> data = jsonDecode(res.body);
+        debugPrint(data.toString());
         setState(() {
           students = data.map((item) => Student.fromJson(item)).toList();
         });
@@ -169,6 +171,7 @@ class _StudentViewState extends State<StudentView> {
         });
       }
     } catch (e) {
+      debugPrint(e.toString());
       setState(() {
         error = 'Failed to Reach The Server.';
       });
@@ -176,33 +179,5 @@ class _StudentViewState extends State<StudentView> {
     setState(() {
       isLoading = false;
     });
-  }
-}
-
-class Student {
-  final String id;
-  final String firstName;
-  final String lastName;
-
-  Student({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-  });
-
-  factory Student.fromJson(Map<String, dynamic> json) {
-    return switch (json) {
-      {
-        '_id': String id,
-        'firstName': String firstName,
-        'lastName': String lastName,
-      } =>
-        Student(
-          id: id,
-          firstName: firstName,
-          lastName: lastName,
-        ),
-      _ => throw const FormatException('Failed to load student.'),
-    };
   }
 }

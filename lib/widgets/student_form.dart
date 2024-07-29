@@ -1,15 +1,17 @@
+import 'package:demo/models.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class StudetnForm extends StatefulWidget {
-  const StudetnForm({super.key, required this.onSubmit});
+  const StudetnForm({super.key, this.onSubmit, this.initialValues});
 
-  final dynamic Function({
+  final void Function({
     required String formData,
     required BuildContext context,
-  }) onSubmit;
+  })? onSubmit;
+  final Student? initialValues;
 
   @override
   State<StudetnForm> createState() => _StudetnFormState();
@@ -40,6 +42,16 @@ class _StudetnFormState extends State<StudetnForm> {
   void initState() {
     super.initState();
     fetchSkills();
+
+    if (widget.initialValues != null) {
+      firstNameController.value = TextEditingValue(text: widget.initialValues!.firstName);
+      firstNameController.text = widget.initialValues!.firstName;
+      lastNameController.value = TextEditingValue(text: widget.initialValues!.lastName);
+      lastNameController.text = widget.initialValues!.lastName;
+
+      selectedSkills = widget.initialValues!.skills;
+      addresses = widget.initialValues!.addresses;
+    }
   }
 
   Future<void> fetchSkills() async {
@@ -156,7 +168,7 @@ class _StudetnFormState extends State<StudetnForm> {
                         'addresses': addressesMap
                       });
 
-                      widget.onSubmit(formData: json, context: context);
+                      widget.onSubmit!(formData: json, context: context);
                     }
                   },
                   child: const Text('Submit'),
@@ -278,48 +290,5 @@ class AddressFields extends StatelessWidget {
         ),
       ],
     );
-  }
-}
-
-class Skill {
-  final String id;
-  final String name;
-
-  Skill({
-    required this.id,
-    required this.name,
-  });
-
-  factory Skill.fromJson(Map<String, dynamic> json) {
-    return switch (json) {
-      {
-        '_id': String id,
-        'name': String name,
-      } =>
-        Skill(
-          id: id,
-          name: name,
-        ),
-      _ => throw const FormatException('Failed to load student.'),
-    };
-  }
-}
-
-class Address {
-  String country;
-  String city;
-  String street1;
-  String street2;
-
-  Address({
-    required this.country,
-    required this.city,
-    required this.street1,
-    required this.street2,
-  });
-
-  @override
-  String toString() {
-    return '{ $country, $city, $street1, $street2 }';
   }
 }
