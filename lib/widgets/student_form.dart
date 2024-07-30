@@ -5,13 +5,13 @@ import 'dart:convert';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class StudetnForm extends StatefulWidget {
-  const StudetnForm({super.key, this.onSubmit, this.initialValues});
+  const StudetnForm({super.key, this.onSubmit, this.initialStudentData});
 
   final void Function({
     required Student formData,
     required BuildContext context,
   })? onSubmit;
-  final Student? initialValues;
+  final Student? initialStudentData;
 
   @override
   State<StudetnForm> createState() => _StudetnFormState();
@@ -43,15 +43,15 @@ class _StudetnFormState extends State<StudetnForm> {
     super.initState();
     fetchSkills();
 
-    if (widget.initialValues != null) {
-      firstNameController.value = TextEditingValue(text: widget.initialValues!.firstName);
-      firstNameController.text = widget.initialValues!.firstName;
-      lastNameController.value = TextEditingValue(text: widget.initialValues!.lastName);
-      lastNameController.text = widget.initialValues!.lastName;
+    if (widget.initialStudentData != null) {
+      firstNameController.value = TextEditingValue(text: widget.initialStudentData!.firstName);
+      firstNameController.text = widget.initialStudentData!.firstName;
+      lastNameController.value = TextEditingValue(text: widget.initialStudentData!.lastName);
+      lastNameController.text = widget.initialStudentData!.lastName;
 
-      selectedSkills = List<Skill>.from(widget.initialValues!.skills);
+      selectedSkills = List<Skill>.from(widget.initialStudentData!.skills);
       skills = selectedSkills; //this is neccessary to show selected skills, before fetching skills
-      addresses = List<Address>.from(widget.initialValues!.addresses);
+      addresses = List<Address>.from(widget.initialStudentData!.addresses);
     }
   }
 
@@ -156,6 +156,7 @@ class _StudetnFormState extends State<StudetnForm> {
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       var student = Student(
+                          id: widget.initialStudentData?.id,
                           firstName: firstNameController.text,
                           lastName: lastNameController.text,
                           skills: selectedSkills,
