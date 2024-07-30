@@ -26,8 +26,6 @@ class _StudetnFormState extends State<StudetnForm> {
   List<Address> addresses = [Address(country: '', city: '', street1: '', street2: '')];
   List<Skill> selectedSkills = [];
 
-  bool isSkillsLoading = true;
-
   void addAddress() {
     setState(() {
       addresses.add(Address(country: '', city: '', street1: '', street2: ''));
@@ -52,6 +50,7 @@ class _StudetnFormState extends State<StudetnForm> {
       lastNameController.text = widget.initialValues!.lastName;
 
       selectedSkills = List<Skill>.from(widget.initialValues!.skills);
+      skills = selectedSkills; //this is neccessary to show selected skills, before fetching skills
       addresses = List<Address>.from(widget.initialValues!.addresses);
     }
   }
@@ -65,7 +64,6 @@ class _StudetnFormState extends State<StudetnForm> {
       List<dynamic> data = jsonDecode(res.body);
       setState(() {
         skills = data.map((item) => Skill.fromJson(item)).toList();
-        isSkillsLoading = false;
       });
     } else {
       throw Exception('error getting skills');
@@ -121,28 +119,26 @@ class _StudetnFormState extends State<StudetnForm> {
                 const SizedBox(
                   height: 16,
                 ),
-                isSkillsLoading
-                    ? const CircularProgressIndicator()
-                    : MultiSelectDialogField(
-                        buttonText: const Text("Choose Student's skills..."),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.1),
-                          borderRadius: const BorderRadius.all(Radius.circular(4)),
-                          border: Border.all(
-                            width: 1,
-                          ),
-                        ),
-                        searchHint: "Choose Student's skills...",
-                        title: const Text("Choose Student's skills"),
-                        searchable: true,
-                        items: skills.map((skill) => MultiSelectItem(skill, skill.name)).toList(),
-                        initialValue: selectedSkills,
-                        onConfirm: (values) {
-                          setState(() {
-                            selectedSkills = values;
-                          });
-                        },
-                      ),
+                MultiSelectDialogField(
+                  buttonText: const Text("Choose Student's skills..."),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1),
+                    borderRadius: const BorderRadius.all(Radius.circular(4)),
+                    border: Border.all(
+                      width: 1,
+                    ),
+                  ),
+                  searchHint: "Choose Student's skills...",
+                  title: const Text("Choose Student's skills"),
+                  searchable: true,
+                  items: skills.map((skill) => MultiSelectItem(skill, skill.name)).toList(),
+                  initialValue: selectedSkills,
+                  onConfirm: (values) {
+                    setState(() {
+                      selectedSkills = values;
+                    });
+                  },
+                ),
                 const SizedBox(
                   height: 32,
                 ),
