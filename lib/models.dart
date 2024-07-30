@@ -1,16 +1,11 @@
 class Student {
-  final String id;
+  final String? id;
   final String firstName;
   final String lastName;
   final List<Skill> skills;
   final List<Address> addresses;
 
-  Student(
-      {required this.id,
-      required this.firstName,
-      required this.lastName,
-      required this.skills,
-      required this.addresses});
+  Student({this.id, required this.firstName, required this.lastName, required this.skills, required this.addresses});
 
   factory Student.fromJson(Map<String, dynamic> json) {
     return switch (json) {
@@ -30,6 +25,14 @@ class Student {
       _ => throw const FormatException('Failed to load student.'),
     };
   }
+
+  Map<String, dynamic> toMap() => {
+        '_id': id,
+        'firstName': firstName,
+        'lastName': lastName,
+        'skills': skills.map((s) => s.toMap()).toList(),
+        'addresses': addresses.map((a) => a.toMap()).toList()
+      };
 }
 
 class Skill {
@@ -54,6 +57,8 @@ class Skill {
       _ => throw const FormatException('Failed to load skill.'),
     };
   }
+
+  Map<String, String?> toMap() => {'_id': id, 'name': name};
 }
 
 class Address {
@@ -90,8 +95,23 @@ class Address {
     };
   }
 
+  Map<String, String?> toMap() => {'_id': id, 'country': country, 'city': city, 'street1': street1, 'street2': street2};
+
   @override
   String toString() {
     return '{ $country, $city, $street1, $street2 }';
   }
 }
+
+// var skills = selectedSkills.map((skill) => {'_id': skill.id}).toList();
+// var addressesMap = addresses
+//     .map((address) =>
+//         {'country': address.country, 'city': address.city, 'street1': address.street1, 'street2': address.street2})
+//     .toList();
+
+// var json = jsonEncode({
+//   'firstName': firstNameController.text,
+//   'lastName': lastNameController.text,
+//   'skills': skills,
+//   'addresses': addressesMap
+// });
