@@ -161,7 +161,6 @@ class _StudentViewState extends State<StudentView> {
 
       if (res.statusCode == 200) {
         List<dynamic> data = jsonDecode(res.body);
-        debugPrint(data.toString());
         setState(() {
           students = data.map((item) => Student.fromJson(item)).toList();
         });
