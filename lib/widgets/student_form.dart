@@ -8,7 +8,7 @@ class StudetnForm extends StatefulWidget {
   const StudetnForm({super.key, this.onSubmit, this.initialValues});
 
   final void Function({
-    required String formData,
+    required Student formData,
     required BuildContext context,
   })? onSubmit;
   final Student? initialValues;
@@ -151,24 +151,13 @@ class _StudetnFormState extends State<StudetnForm> {
                 ElevatedButton(
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
-                      var skills = selectedSkills.map((skill) => {'_id': skill.id}).toList();
-                      var addressesMap = addresses
-                          .map((address) => {
-                                'country': address.country,
-                                'city': address.city,
-                                'street1': address.street1,
-                                'street2': address.street2
-                              })
-                          .toList();
+                      var student = Student(
+                          firstName: firstNameController.text,
+                          lastName: lastNameController.text,
+                          skills: selectedSkills,
+                          addresses: addresses);
 
-                      var json = jsonEncode({
-                        'firstName': firstNameController.text,
-                        'lastName': lastNameController.text,
-                        'skills': skills,
-                        'addresses': addressesMap
-                      });
-
-                      widget.onSubmit!(formData: json, context: context);
+                      widget.onSubmit!(formData: student, context: context);
                     }
                   },
                   child: const Text('Submit'),
