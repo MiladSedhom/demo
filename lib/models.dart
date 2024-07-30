@@ -59,6 +59,13 @@ class Skill {
   }
 
   Map<String, String?> toMap() => {'_id': id, 'name': name};
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Skill && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 class Address {
@@ -102,16 +109,3 @@ class Address {
     return '{ $country, $city, $street1, $street2 }';
   }
 }
-
-// var skills = selectedSkills.map((skill) => {'_id': skill.id}).toList();
-// var addressesMap = addresses
-//     .map((address) =>
-//         {'country': address.country, 'city': address.city, 'street1': address.street1, 'street2': address.street2})
-//     .toList();
-
-// var json = jsonEncode({
-//   'firstName': firstNameController.text,
-//   'lastName': lastNameController.text,
-//   'skills': skills,
-//   'addresses': addressesMap
-// });
