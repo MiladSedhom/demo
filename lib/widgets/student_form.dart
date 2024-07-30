@@ -193,6 +193,7 @@ class AddressFields extends StatelessWidget {
           children: [
             Expanded(
               child: TextFormField(
+                initialValue: addresses[index].country,
                 onChanged: (value) {
                   addresses[index].country = value;
                 },
@@ -216,6 +217,7 @@ class AddressFields extends StatelessWidget {
             ),
             Expanded(
               child: TextFormField(
+                initialValue: addresses[index].city,
                 onChanged: (value) {
                   addresses[index].city = value;
                 },
@@ -240,6 +242,7 @@ class AddressFields extends StatelessWidget {
           height: 16,
         ),
         TextFormField(
+          initialValue: addresses[index].street1,
           onChanged: (value) {
             addresses[index].street1 = value;
           },
@@ -264,6 +267,7 @@ class AddressFields extends StatelessWidget {
           children: [
             Expanded(
               child: TextFormField(
+                initialValue: addresses[index].street2,
                 onChanged: (value) {
                   addresses[index].street2 = value;
                 },
