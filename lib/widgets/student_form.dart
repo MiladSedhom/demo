@@ -72,7 +72,6 @@ class _StudetnFormState extends State<StudetnForm> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("Available skills: ${skills.map((s) => s.name).join(', ')}");
     return SingleChildScrollView(
       child: Form(
           key: formKey,
