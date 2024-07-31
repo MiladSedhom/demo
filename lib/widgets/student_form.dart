@@ -132,6 +132,7 @@ class _StudetnFormState extends State<StudetnForm> {
                   searchable: true,
                   items: skills.map((skill) => MultiSelectItem(skill, skill.name)).toList(),
                   initialValue: selectedSkills,
+                  selectedColor: Theme.of(context).primaryColor,
                   onConfirm: (values) {
                     setState(() {
                       selectedSkills = values;
