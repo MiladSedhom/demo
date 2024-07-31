@@ -2,6 +2,7 @@ import "dart:convert";
 
 import "package:demo/models.dart";
 import "package:demo/screens/create_student.dart";
+import "package:demo/screens/edit_student.dart";
 import "package:flutter/material.dart";
 import "package:http/http.dart" as http;
 
@@ -48,7 +49,7 @@ class _StudentViewState extends State<StudentView> {
   bool isLoading = true;
   String error = '';
 
-  final limit = 5;
+  final limit = 10;
   var page = 0;
   var sortBy = "";
   var sortType = "asc";
@@ -80,8 +81,21 @@ class _StudentViewState extends State<StudentView> {
                   itemCount: students.length,
                   itemBuilder: (context, int index) {
                     return ListTile(
-                      title: Text(students[index].firstName),
-                      subtitle: Text(students[index].lastName),
+                      title: Text("${students[index].firstName} ${students[index].lastName}"),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => EditStudentScreen(
+                              student: students[index],
+                              setStudent: (s) {
+                                setState(() {
+                                  students[index] = s;
+                                });
+                              },
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
                 );
