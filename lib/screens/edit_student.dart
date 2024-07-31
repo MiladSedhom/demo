@@ -1,18 +1,25 @@
 import 'dart:convert';
 
 import 'package:demo/models.dart';
+import 'package:demo/widgets/loading_modal.dart';
 import 'package:demo/widgets/student_form.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class EditStudentScreen extends StatelessWidget {
+class EditStudentScreen extends StatefulWidget {
   const EditStudentScreen({super.key, required this.student, required this.setStudent});
 
   final Student student;
   final void Function(Student) setStudent;
 
+  @override
+  State<EditStudentScreen> createState() => _EditStudentScreenState();
+}
+
+class _EditStudentScreenState extends State<EditStudentScreen> {
+  bool isLoading = false;
+
   Future<http.Response> editStudent(Student student) async {
-    debugPrint("inside edit: ${student.id}");
     String url = 'http://localhost:3000/students/${student.id}';
 
     final res = await http.put(Uri.parse(url),
@@ -25,9 +32,16 @@ class EditStudentScreen extends StatelessWidget {
   }
 
   void onSubmit({required Student formData, required BuildContext context}) {
+    setState(() {
+      isLoading = true;
+    });
     editStudent(formData).then((res) {
       if (res.statusCode == 200) {
-        setStudent(Student.fromJson(jsonDecode(res.body)));
+        setState(() {
+          isLoading = false;
+        });
+
+        widget.setStudent(Student.fromJson(jsonDecode(res.body)));
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Student Edited Successfully!"),
           duration: Duration(seconds: 1),
@@ -38,9 +52,9 @@ class EditStudentScreen extends StatelessWidget {
           duration: Duration(seconds: 1),
         ));
       }
-    });
-    Future.delayed(const Duration(seconds: 1), () {
-      Navigator.of(context).pop();
+      Future.delayed(const Duration(seconds: 1), () {
+        Navigator.of(context).pop();
+      });
     });
   }
 
@@ -52,10 +66,13 @@ class EditStudentScreen extends StatelessWidget {
         backgroundColor: Colors.grey[400],
         centerTitle: true,
       ),
-      body: StudetnForm(
-        initialStudentData: student,
-        onSubmit: onSubmit,
-      ),
+      body: Stack(alignment: Alignment.center, children: [
+        StudetnForm(
+          initialStudentData: widget.student,
+          onSubmit: onSubmit,
+        ),
+        if (isLoading) const LoadingModal()
+      ]),
     );
   }
 }
