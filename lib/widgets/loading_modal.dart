@@ -7,19 +7,17 @@ class LoadingModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Stack(children: [
-        Opacity(
-          opacity: 0.6,
-          child: Container(
-            color: Colors.black,
-          ),
+    return Stack(children: [
+      Opacity(
+        opacity: 0.6,
+        child: Container(
+          color: Colors.black,
         ),
-        const Center(
-            child: CircularProgressIndicator(
-          color: Colors.white,
-        ))
-      ]),
-    );
+      ),
+      const Center(
+          child: CircularProgressIndicator(
+        color: Colors.white,
+      ))
+    ]);
   }
 }
