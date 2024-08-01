@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:demo/screens/home.dart';
 
 void main() {
-  debugPrint('start of main');
   runApp(MaterialApp(
     home: const Home(),
     theme: ThemeData(
@@ -13,5 +12,4 @@ void main() {
       ),
     ),
   ));
-  debugPrint('end of main');
 }
